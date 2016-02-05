@@ -9,8 +9,9 @@ function randomDate(start, end) {
 }
 function insert(collection, args, amount, insertFunctionOutcome) {
 	//make copy of the object so we can get different faker data every time
+	var argsWithValues;
 	for (var i = 0; i < amount; i++) {
-		var argsWithValues = Object.assign({},args);
+		 argsWithValues = Object.assign({},args);
 
 		for (var key in args) {
 			if (insertFunctionOutcome) {
@@ -70,32 +71,42 @@ function createMockActivityTypes() {
 
 function createMockActivities() {
 	console.log('Creating mock activies');
+	var amount =  25;
 
 	var residents = Residents.find().fetch();
 	var activityTypes = ActivityTypes.find().fetch();
-	var endDate = new Date();
-	var startDate = new Date();
-	startDate.setDate(endDate.getDate() - 30);
 	var roleId = Roles.getAllRoles().fetch()[0]._id;
 	var activityType = function() {return activityTypes[Math.floor((Math.random() * activityTypes.length) + 0)]._id;};
-
+	var date = function() {
+		var endDate = new Date();
+		var startDate = new Date();
+		startDate.setDate(endDate.getDate() - 30);
+		return randomDate(endDate,startDate);
+		};
 	var duration = function() {return Math.floor((Math.random() * 60) + 1);};
 	for (var i = 0; i < residents.length; i++) {
-		var amount =  (Math.random() * (50 - 20 + 1) )<<0;
 
 		var residentId = residents[i]._id;
-		var args = {'activityTypeId': activityType(), 'activityDate': randomDate(endDate,startDate),'facilitatorRoleId': roleId,'duration': duration(),'residentIds': [residentId]};
+		var args = {'activityTypeId': activityType, 'activityDate': date,'facilitatorRoleId': roleId,'duration': duration,'residentIds': [residentId]};
 		insert(Activities,args,amount,true);
 	}
 }
 
 Meteor.methods({
 	'createMockData': function() {
-	createMockGroups();
-	createMockHomes();
-	createMockResidents();
-	createMockActivityTypes();
-	createMockActivities();
-},
+		createMockGroups();
+		createMockHomes();
+		createMockResidents();
+		createMockActivityTypes();
+		createMockActivities();
+	},
+	'removeAllData': function() {
+		Groups._dropCollection();
+		Homes._dropCollection();
+		Residents._dropCollection();
+		ActivityTypes._dropCollection();
+		Activities._dropCollection();
+
+	},
 
 });

@@ -7,3 +7,7 @@ Usage:
 Meteor.call("createMockData")
 ```
 
+To reset the app to the state it was use
+```
+Meteor.call("removeAllData")
+```

@@ -9,8 +9,9 @@ function randomDate(start, end) {
 }
 function insert(collection, args, amount, insertFunctionOutcome) {
 	//make copy of the object so we can get different faker data every time
-	var argsWithValues = Object.assign({},args);
 	for (var i = 0; i < amount; i++) {
+		var argsWithValues = Object.assign({},args);
+
 		for (var key in args) {
 			if (insertFunctionOutcome) {
 				if (typeof args[key] === 'function') {
@@ -19,8 +20,9 @@ function insert(collection, args, amount, insertFunctionOutcome) {
 				}
 			}
 		}
+		collection.insert(argsWithValues);
+
 	}
-	collection.insert(argsWithValues);
 }
 
 function createMockGroups() {
@@ -34,7 +36,7 @@ function createMockGroups() {
 }
 function createMockHomes() {
 	console.log('Creating mock homes');
-	var amount = 5;
+	var amount = 3;
 	var address = function() {return faker.address.city();};
 
 	for (var i = 0; i < groups.length; i++) {
@@ -49,7 +51,7 @@ function createMockHomes() {
 
 function createMockResidents() {
 	console.log('Creating mock residents');
-	var amount = 25;
+	var amount = 6;
 	var homes = Homes.find().fetch();
 	var firstName = function() {return faker.name.firstName();};
 	var lastInitial =  function() {return faker.name.lastName().charAt(0);};
@@ -79,7 +81,8 @@ function createMockActivities() {
 
 	var duration = function() {return Math.floor((Math.random() * 60) + 1);};
 	for (var i = 0; i < residents.length; i++) {
-		var amount = Math.floor((Math.random() * 50) + 1);
+		var amount =  (Math.random() * (50 - 20 + 1) )<<0;
+
 		var residentId = residents[i]._id;
 		var args = {'activityTypeId': activityType(), 'activityDate': randomDate(endDate,startDate),'facilitatorRoleId': roleId,'duration': duration(),'residentIds': [residentId]};
 		insert(Activities,args,amount,true);
